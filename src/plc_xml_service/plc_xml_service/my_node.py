@@ -10,7 +10,7 @@ class PlcTcpServer(Node):
     def __init__(self):
         super().__init__('plc_tcp_server')
 
-        self.host = '172.20.66.187'
+        self.host = '172.20.66.192'
         self.port = 12381
 
         self.start_server()
@@ -20,7 +20,7 @@ class PlcTcpServer(Node):
         server.bind((self.host, self.port))
         server.listen(1)
 
-        self.get_logger().info(f"Listening on port {self.port}...")
+        self.get_logger().info(f"Listening on {self.host}:{self.port}...")
 
         while True:
             client, addr = server.accept()
