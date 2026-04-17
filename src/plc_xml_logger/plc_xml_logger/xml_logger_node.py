@@ -1,4 +1,5 @@
 import os
+import json
 from datetime import datetime
 
 import rclpy
@@ -30,7 +31,21 @@ class PlcXmlLogger(Node):
 
     def handle_message(self, msg):
         timestamp = datetime.now().isoformat(timespec='milliseconds')
-        line = f'[{timestamp}] {msg.data}\n'
+        xml_payload = msg.data
+        processing_time = None
+
+        try:
+            parsed = json.loads(msg.data)
+            if isinstance(parsed, dict):
+                xml_payload = parsed.get('xml_payload', msg.data)
+                processing_time = parsed.get('processing_time_s')
+        except json.JSONDecodeError:
+            pass
+
+        if processing_time is None:
+            line = f'[{timestamp}] processing_time_s=unknown xml={xml_payload}\n'
+        else:
+            line = f'[{timestamp}] processing_time_s={processing_time:.6f} xml={xml_payload}\n'
 
         try:
             with open(self.output_file, 'a', encoding='utf-8') as txt_file:
