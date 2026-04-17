@@ -3,6 +3,7 @@ from rclpy.node import Node
 import socket
 import time
 import xml.etree.ElementTree as ET
+from std_msgs.msg import String
 
 
 class PlcTcpServer(Node):
@@ -12,6 +13,7 @@ class PlcTcpServer(Node):
 
         self.host = '172.20.66.196'
         self.port = 12381
+        self.publisher_ = self.create_publisher(String, 'plc_xml_data', 10)
 
         self.start_server()
 
@@ -31,6 +33,8 @@ class PlcTcpServer(Node):
                 if payload is None:
                     self.get_logger().warn("Client disconnected before sending XML payload")
                     continue
+
+                self.publish_payload(payload)
 
                 processing_time = self.process_xml(payload)
 
@@ -97,6 +101,12 @@ class PlcTcpServer(Node):
 
         xml_candidate = bytes(payload).split(b'\x00', 1)[0].strip()
         return xml_candidate if xml_candidate else None
+
+    def publish_payload(self, xml_payload):
+        msg = String()
+        msg.data = xml_payload.decode('utf-8', errors='replace')
+        self.publisher_.publish(msg)
+        self.get_logger().info('Published PLC XML payload on topic plc_xml_data')
 
     def process_xml(self, xml_payload):
         start = time.perf_counter()
