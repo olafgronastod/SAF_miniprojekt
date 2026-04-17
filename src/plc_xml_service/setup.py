@@ -24,7 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'my_node = plc_xml_service.my_node:main'
+            'my_node = plc_xml_service.saf_project_ros2_code:main'
         ],
     },
 )

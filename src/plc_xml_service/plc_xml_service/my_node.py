@@ -120,3 +120,7 @@ def main():
     node = PlcTcpServer()
     rclpy.spin(node)
     rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
