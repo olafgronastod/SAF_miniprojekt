@@ -15,3 +15,7 @@
 [2026-04-17T09:59:31.622] processing_time_s=0.002470 xml=<?xml version="1.0"?><ReadEvent><CarrierID>5</CarrierID><DateTime>DT#2026-04-17-10:40:57</DateTime><StationID>ST_PLC09</StationID></ReadEvent>
 [2026-04-17T09:59:38.688] processing_time_s=0.002382 xml=<?xml version="1.0"?><ReadEvent><CarrierID>9</CarrierID><DateTime>DT#2026-04-17-10:41:04</DateTime><StationID>ST_PLC09</StationID></ReadEvent>
 [2026-04-17T09:59:38.790] processing_time_s=0.002383 xml=<?xml version="1.0"?><ReadEvent><CarrierID>7</CarrierID><DateTime>DT#2026-04-17-10:40:31</DateTime><StationID>ST_PLC09</StationID></ReadEvent>
+[2026-04-17T10:00:58.848] processing_time_s=0.002383 xml=<?xml version="1.0"?><ReadEvent><CarrierID>7</CarrierID><DateTime>DT#2026-04-17-10:40:31</DateTime><StationID>ST_PLC09</StationID></ReadEvent>
+[2026-04-17T10:01:05.760] processing_time_s=0.002701 xml=<?xml version="1.0"?><ReadEvent><CarrierID>5</CarrierID><DateTime>DT#2026-04-17-10:40:38</DateTime><StationID>ST_PLC09</StationID></ReadEvent>
+[2026-04-17T10:01:12.798] processing_time_s=0.002451 xml=<?xml version="1.0"?><ReadEvent><CarrierID>9</CarrierID><DateTime>DT#2026-04-17-10:40:45</DateTime><StationID>ST_PLC09</StationID></ReadEvent>
+[2026-04-17T10:01:18.693] processing_time_s=0.002699 xml=<?xml version="1.0"?><ReadEvent><CarrierID>7</CarrierID><DateTime>DT#2026-04-17-10:40:50</DateTime><StationID>ST_PLC09</StationID></ReadEvent>
