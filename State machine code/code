@@ -1,0 +1,106 @@
+CASE state OF
+
+	0: //initialazation
+	IO.xQA1_RIGHT := TRUE;
+	IO.xMB20 := FALSE;
+	TCPdent.Connect(sIP := '172.20.66.196', uiPort := 12381);
+	RFID.ClearError();
+	state := 1;
+	
+	1: // wait for TCP to connect
+	IF TCPdent.xConnected THEN
+    	state := 2; // don't gate on xReady here
+	END_IF
+	
+	2: //wait for RFID to clear
+	IF RFID.xReady THEN
+		RFID.Connect(usiNodeId := 32 , usiNetworkId := 0, usiChannel := 1);
+		state :=3;
+	END_IF
+	
+	3: //wait for RFID to connect
+	IF RFID.xReady THEN
+		state :=4;
+	END_IF
+
+	4: //wait for carrier
+	IF IO.xBG21 = TRUE THEN
+		state := 5;
+	END_IF
+	
+	5: //read the RFID
+	sendTrigger := TRUE;
+	RFID.ReadTag(uiStartAddress := 0, uiDatalength := SIZEOF(RFID_data), ADR(RFID_data));
+	state := 6;
+	
+	6: //wait for rfid read
+	IF RFID.xReady THEN
+		corrected_ID := dc_ecp.SwapWord(RFID_data.uiCarrierID);
+		
+		state := 1001;
+	END_IF
+	
+	1001: //Call functionblock to get date and time
+		DateTimeFB.xExecute := TRUE;
+		state := 1002;
+	
+	1002: //wait for FB to be finish
+		IF DateTimeFB.xDone THEN
+			DateTime := DateTimeFB.dtDateAndTime;
+			DateTimeString := DT_TO_STRING(DateTime);
+			DateTimeFB.xExecute := FALSE; // reset FB
+			state :=1003;
+		END_IF
+	
+		
+            
+    1003: // build XML string
+    sXML := CONCAT('<?xml version="1.0"?><ReadEvent>',
+            CONCAT('<CarrierID>', 
+            CONCAT(UINT_TO_STRING(corrected_ID),
+            CONCAT('</CarrierID><DateTime>',
+            CONCAT(DateTimeString,
+            CONCAT('</DateTime><StationID>',
+            CONCAT(sStationID,
+            '</StationID></ReadEvent>')))))));
+            
+        // copy XML into DataOut before sending
+        DataOut := sXML;
+		IF sendTrigger THEN
+		TCPdent.Send(pToSend :=ADR(DataOut), uiSizeToSend:=SIZEOF(DataOut));
+		sendTrigger :=FALSE;
+		state :=7;
+		END_IF
+	
+	7: //wait for send to finish¨
+	IF TCPdent.xReady THEN
+		TCPdent.Receive(pToReceive:=ADR(dataIn), uiSizeToReceive:=SIZEOF(dataIn));
+		state :=8;
+	END_IF
+	
+	8: //wait for recieve data
+	IF TCPdent.xError THEN
+		xTimerEnable := FALSE;
+		state := 4;
+	ELSIF TCPdent.xReady AND LEN(DataIn) > 0 THEN
+		ProcessingTime_s := STRING_TO_UDINT(DataIn);
+		IF ProcessingTime_s < timer_threshold THEN
+			xTimerEnable := TRUE;
+			state := 9;
+		ELSE 
+			xTimerEnable := FALSE;
+			//Process data here
+			IO.xMB20 := TRUE;
+			state :=30;
+		END_IF
+	END_IF
+	
+	9: // wait 5 seconds
+	timer(IN := TRUE, PT := T#5s);
+	
+	IF Timer.Q THEN
+		xtimerEnable := FALSE;
+		IO.xMB20 := TRUE;
+		state :=30;
+	END_IF
+	

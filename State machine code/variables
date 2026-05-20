@@ -1,0 +1,23 @@
+PROGRAM PLC_PRG
+
+
+VAR
+	state: UINT := 0;
+	timer: TON;
+	RFID: dc_ecp.Dtm425;
+	RFID_data: dc_ecp.st_CPF_RfidData;
+	TCPdent: dc_ecp.TcpClientByteStream;
+	DataIn: STRING[255];
+	DataOut: string[255]; 
+	Corrected_ID: UINT;
+	DateTimeFB: DTU.GetDateAndTime;
+	DateTime: DATE_AND_TIME;
+	DateTimeString: String;
+	sStationID: STRING[20] := 'ST_PLC09';
+	sXML: STRING[500];
+	ProcessingTime_s : UDINT;
+	timer_threshold : UDINT := 1;
+	xTimerEnable : BOOL :=FALSE;
+	sendTrigger : BOOL;
+	xReady_old : BOOL :=FALSE;
+END_VAR
