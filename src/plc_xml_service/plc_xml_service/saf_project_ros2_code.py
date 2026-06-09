@@ -106,7 +106,9 @@ class PlcTcpServer(Node):
         payload_text = xml_payload.decode('utf-8', errors='replace')
         message_data = {
             'xml_payload': payload_text,
-            'processing_time_s': processing_time,
+            'processing_time_s': processing_time,  
+            # Her burde vi haft lavet vores table lookup hvor vi tjekker carrier_id og station_id og veljer at 
+            # sende vores processing time baseret på vores processing time.csv 
         }
 
         msg = String()
