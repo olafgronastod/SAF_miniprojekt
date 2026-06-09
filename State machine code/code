@@ -103,4 +103,12 @@ CASE state OF
 		IO.xMB20 := TRUE;
 		state :=30;
 	END_IF
+
+	30: //RELEASE stopper
+	IF IO.xBG21 = FALSE THEN
+		IO.xMB20 := FALSE;
+		DataIn := '';
+		xTimerEnable:= FALSE;
+		state :=4;
+	END_IF
 	
